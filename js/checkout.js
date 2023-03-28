@@ -1,6 +1,7 @@
 // Exercise 6
 function validate(event) {
 	event.preventDefault();
+	let error = false;
 	_resetValidations();
 
 	// Get the input fields
@@ -24,7 +25,11 @@ function validate(event) {
 	_validatePhoneNumber();
 	_validatePassword();
 	_validateEmail();
-
+	
+	if (!error) {
+		alert("Data Saved");
+		location.reload(); 		
+	}
 }
 
 function _resetValidations() {
@@ -40,40 +45,46 @@ function _validateEmptyAndMinimumOf3length(){
 	formInputs.forEach(input => {
 		if (input.value === "" || input.value.length < 3) {
 			input.classList.add("is-invalid");
+			error = true;
 		}
 	});
 }
 
 function _validateNameAndLastName(){	
-	if (!fName.classList.contains('is-invalid') && !_hasOnlyLetters(fName)) {
+	if (!fName.classList.contains('is-invalid') && !_hasOnlyLetters(fName.value)) {
 		errorName.innerHTML ='Only letter are allowed'
-		fName.classList.add("is-invalid");		
+		fName.classList.add("is-invalid");
+		error = true;		
 	}
 
-	if (!fLastN.classList.contains('is-invalid') && !_hasOnlyLetters(fLastN)) {
+	if (!fLastN.classList.contains('is-invalid') && !_hasOnlyLetters(fLastN.value)) {
 		errorLastN.innerHTML ='Only letter are allowed'
-		fLastN.classList.add("is-invalid");		
+		fLastN.classList.add("is-invalid");
+		error = true;		
 	}	
 }
 
 function _validatePhoneNumber(){	
-	if (!fPhone.classList.contains('is-invalid') && !_hasOnlyNumbers(fPhone)) {
+	if (!fPhone.classList.contains('is-invalid') && !_hasOnlyNumbers(fPhone.value)) {
 		errorPhone.innerHTML ='Only numbers are allowed'
-		fPhone.classList.add("is-invalid");		
+		fPhone.classList.add("is-invalid");
+		error = true;		
 	}
 }
 
 function _validatePassword(){	
-	if (!fPassword.classList.contains('is-invalid') && !_hasNumbersAndLetters(fPassword)) {
+	if (!fPassword.classList.contains('is-invalid') && !_hasNumbersAndLetters(fPassword.value)) {
 		errorPassword.innerHTML ='It should contain letters and numbers'
-		fPassword.classList.add("is-invalid");		
+		fPassword.classList.add("is-invalid");
+		error = true;		
 	}
 }
 
 function _validateEmail(){	
-	if (!fEmail.classList.contains('is-invalid') && !_isValidEmail(fEmail)) {
+	if (!fEmail.classList.contains('is-invalid') && !_isValidEmail(fEmail.value)) {
 		errorEmail.innerHTML ='It is not a valid format email'
-		fEmail.classList.add("is-invalid");		
+		fEmail.classList.add("is-invalid");
+		error = true;		
 	}
 }
 
