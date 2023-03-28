@@ -1,6 +1,3 @@
-import { products } from "./data.js";
-
-
 // Array with products (objects) added directly with push(). Products in this array are repeated.
 var cartList = [];
 
