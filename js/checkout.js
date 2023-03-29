@@ -1,7 +1,8 @@
+let error = false;
+
 // Exercise 6
 function validate(event) {
 	event.preventDefault();
-	let error = false;
 	_resetValidations();
 
 	// Get the input fields
