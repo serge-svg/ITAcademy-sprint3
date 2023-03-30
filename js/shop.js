@@ -32,27 +32,17 @@ function _emptyCartTable() {
 
 // Exercise 6
 function _printCart() {
-  //document.querySelector('#total_price').innerHTML = totalPrice;
   cart.forEach((product) => {
-    var newProductRow = productsTable.insertRow(-1);
+    let newProductRow = productsTable.insertRow(-1);
+    newProductRow.setAttribute('id', 'tr-product' + product.id);
     newProductRow.insertCell(0).innerHTML = product.name;
-    newProductRow.insertCell(1).innerHTML = "$" + product.price;
+    newProductRow.insertCell(1).innerHTML = product.price;
     newProductRow.insertCell(2).innerHTML = product.quantity;
-    newProductRow.insertCell(3).innerHTML = "$" + product.subtotalWithDiscount;
-    /*
-    var removeButton = document.createElement('input');
-    removeButton.type = "button";
-    removeButton.className = "btn";
-    removeButton.value = "-";  
-    newProductRow.insertCell(4).appendChild(removeButton);
-    */
-    newProductRow.insertCell(4).innerHTML = "<button id='btnDelete' onclick='deleteProduct()'>Delete</button>";
+    newProductRow.insertCell(3).innerHTML = product.subtotalWithDiscount;
+    newProductRow.insertCell(4).innerHTML = `<button onclick='removeFromCart(${product.id})'>Delete</button>`;
   });
 }
 
-function deleteProduct() {
-  console.log('deleting');
-}
 
 // ** Nivell II **
 // In order to maintain the previus code for reviews I have created/implemented some new methods: addToCart(), calculateTotals() and  applyPromotions()
@@ -79,13 +69,17 @@ function addToCart(id) {
     cart.push(productSelected);
   } else {
     cart[productIndex].quantity ++;
-    cart[productIndex].subtotal = cart[productIndex].price * cart[productIndex].quantity;
-    productSelected.subtotalWithDiscount += _applyPromotions(productIndex);
+    cart[productIndex].subtotal = cart[productIndex].price * cart[productIndex].quantity;  
+   
+    let subtotalWithDiscount = (productSelected.subtotalWithDiscount + _applyPromotions(productIndex)).toFixed(2);      
+    productSelected.subtotalWithDiscount = parseFloat(subtotalWithDiscount);  
+
   }
 
   totalItems ++;  
   document.querySelector("#count_product").innerHTML = totalItems;
-  document.querySelector("#total_price").innerHTML = _calculateTotal();
+  let total = _calculateTotal();
+  document.querySelector("#total_price").innerHTML = total;
 }
 
 function _applyPromotions(productIndex) {
@@ -108,21 +102,40 @@ function _calculateTotal() {
 }
 
 // Exercise 8
-function _removeFromCart(id) {
+function removeFromCart(id) {  
   // 1. Loop for to the array products to get the item to remove to cart
   // 2. Remove found product to the cartList array
   let productIndex = cart.findIndex((product) => product.id === id);
-  if (cart[productIndex].type === "grocery") totalGroceryItems --;
-  
-  if (cart[productIndex].quantity > 0) {
-    cart[productIndex].quantity --;
-    cart[productIndex].subtotalWithDiscount -= _applyPromotions(productIndex);
+  if (productIndex > -1 && cart[productIndex].quantity > 0){ 
+    if (cart[productIndex].type === "grocery") totalGroceryItems --;    
+
+    let subtotalWithDiscount = (cart[productIndex].subtotalWithDiscount - _applyPromotions(productIndex)).toFixed(2);      
+    cart[productIndex].subtotalWithDiscount = parseFloat(subtotalWithDiscount);  
+
     cart[productIndex].subtotal -= cart[productIndex].price;
-    document.querySelector("#total_price").innerHTML = _calculateTotal();
+    cart[productIndex].quantity --;
+
     totalItems --;  
     document.querySelector("#count_product").innerHTML = totalItems;  
-  }
 
+    if (cart[productIndex].quantity > 0){
+      _updateRowFromTable(id, productIndex);
+    } else {
+      cart.splice(productIndex, 1)
+      _removeRowFromTable(id);
+    } 
+    document.querySelector("#total_price").innerHTML = _calculateTotal();    
+  }
+}
+
+function _updateRowFromTable(id, productIndex){
+  document.getElementById("tr-product" + id).cells[2].innerHTML = cart[productIndex].quantity;
+  document.getElementById("tr-product" + id).cells[3].innerHTML = cart[productIndex].subtotalWithDiscount;
+}
+
+function _removeRowFromTable(id){
+  let row = document.getElementById("tr-product" + id);
+  row.parentNode.removeChild(row);
 }
 
 function open_modal() {
